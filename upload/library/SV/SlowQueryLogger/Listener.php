@@ -6,7 +6,8 @@ class SV_SlowQueryLogger_Listener
     {
         if ($dependencies instanceof XenForo_Dependencies_Public)
         {
-            // install a profiler            
+            // install a profiler
+            XenForo_Application::getDb()->setProfiler(new SV_SlowQueryLogger_Profiler());
         }
     }
 }
