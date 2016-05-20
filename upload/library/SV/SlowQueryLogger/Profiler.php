@@ -5,7 +5,7 @@ class SV_SlowQueryLogger_Profiler extends Zend_Db_Profiler
     protected $reportSlowQueries = false;
     protected $slowQuery = 1.0;
 
-    public function __construct($reportSlowQueries = true, $slowQuery = 0.5, $enabled = false)
+    public function __construct($reportSlowQueries = true, $slowQuery = 1.0, $enabled = false)
     {
         $this->slowQuery = $slowQuery;
         $this->reportSlowQueries = $reportSlowQueries;
@@ -42,7 +42,7 @@ class SV_SlowQueryLogger_Profiler extends Zend_Db_Profiler
                 if ($ret == self::STORED)
                 {
                     $qp = $this->_queryProfiles[$queryId];
-                    if ($qp->getElapsedSecs() > $this->slowQuery)
+                    if ($qp->getElapsedSecs() >= $this->slowQuery)
                     {
                         static $requestPaths = null;
                         if ($requestPaths === null)
