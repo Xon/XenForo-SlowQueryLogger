@@ -13,9 +13,10 @@
   <email_templates/>
   <email_template_modifications/>
   <optiongroups>
-    <option option_id="sv_slowquery_threshold" edit_format="spinbox" data_type="integer" can_backup="1">
+    <option option_id="sv_slowquery_threshold" edit_format="spinbox" data_type="numeric" can_backup="1">
       <default_value>1</default_value>
-      <edit_format_params>min=1</edit_format_params>
+      <edit_format_params>min=1
+step=0.25</edit_format_params>
       <sub_options></sub_options>
       <relation group_id="performance" display_order="10310"/>
     </option>
