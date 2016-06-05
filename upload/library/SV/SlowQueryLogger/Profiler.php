@@ -3,11 +3,10 @@
 class SV_SlowQueryLogger_Profiler extends Zend_Db_Profiler
 {
     protected $reportSlowQueries = false;
-    protected $slowQuery = 1.0;
 
-    public function __construct($reportSlowQueries = true, $slowQuery = 1.0, $enabled = false)
+    public function __construct($reportSlowQueries = true, $enabled = false)
     {
-        $this->slowQuery = $slowQuery;
+        $this->slowQuery = XenForo_Application::getOptions()->sv_slowquery_threshold;
         $this->reportSlowQueries = $reportSlowQueries;
         $this->setEnabled($enabled);
     }
