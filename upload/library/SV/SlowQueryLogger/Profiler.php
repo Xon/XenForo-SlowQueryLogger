@@ -1,6 +1,6 @@
 <?php
 
-class SV_SlowQueryLogger_Profiler extends Zend_Db_Profiler
+class SV_SlowQueryLogger_Profiler extends XFCP_SV_SlowQueryLogger_Profiler
 {
     protected $reportSlowQueries = false;
 

@@ -6,8 +6,22 @@ class SV_SlowQueryLogger_Listener
     {
         if ($dependencies instanceof XenForo_Dependencies_Public)
         {
-            // install a profiler
-            XenForo_Application::getDb()->setProfiler(new SV_SlowQueryLogger_Profiler());
+            $db = XenForo_Application::getDb();
+            $class = null;
+            if ($object = $db->getProfiler())
+            {
+                if (!($object instanceof Zend_Db_Profiler))
+                {
+                    return;
+                }
+                $class = get_class($object);
+            }
+            if (empty($class))
+            {
+                $class = 'Zend_Db_Profiler';
+            }
+            eval('class XFCP_SV_SlowQueryLogger_Profiler extends ' .$class. ' {}');
+            $db->setProfiler(new SV_SlowQueryLogger_Profiler());
         }
     }
 }
