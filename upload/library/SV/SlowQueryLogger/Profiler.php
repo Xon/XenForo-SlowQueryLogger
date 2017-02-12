@@ -65,7 +65,7 @@ class SV_SlowQueryLogger_Profiler extends XFCP_SV_SlowQueryLogger_Profiler
     {
         if (!$this->reportSlowQueries)
         {
-            return parent::queryEnd($queryId);;
+            return parent::queryEnd($queryId);
         }
         $old = $this->_enabled;
         $this->_enabled = true;
@@ -100,8 +100,9 @@ class SV_SlowQueryLogger_Profiler extends XFCP_SV_SlowQueryLogger_Profiler
             $this->_enabled = $old;
         }
 
+        $queryEndTime = $queryEndTime - $this->startTransactionTime;
         if ($this->transactionEndQueryId !== null && $this->transactionEndQueryId === $queryId &&
-            ($queryEndTime - $this->startTransactionTime) >= $this->slowTransaction)
+            $queryEndTime >= $this->slowTransaction)
         {
             $this->transactionEndQueryId = null;
             static $requestPaths = null;
