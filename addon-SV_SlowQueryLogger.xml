@@ -18,7 +18,14 @@
       <edit_format_params>min=0
 step=0.25</edit_format_params>
       <sub_options></sub_options>
-      <relation group_id="performance" display_order="10310"/>
+      <relation group_id="performance" display_order="10410"/>
+    </option>
+    <option option_id="sv_slowtransaction_threshold" edit_format="spinbox" data_type="numeric" can_backup="1">
+      <default_value>1.5</default_value>
+      <edit_format_params>min=0
+step=0.25</edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="performance" display_order="10420"/>
     </option>
   </optiongroups>
   <permissions>
@@ -29,6 +36,8 @@ step=0.25</edit_format_params>
   <phrases>
     <phrase title="option_sv_slowquery_threshold" version_id="1000001" version_string="1.0.0a"><![CDATA[Slow Query Threshold]]></phrase>
     <phrase title="option_sv_slowquery_threshold_explain" version_id="1000001" version_string="1.0.0a"><![CDATA[An error will be logged after the configured number of seconds has passed during execution of a query.]]></phrase>
+    <phrase title="option_sv_slowtransaction_threshold" version_id="1010000" version_string="1.1.0"><![CDATA[Slow Transaction Threshold]]></phrase>
+    <phrase title="option_sv_slowtransaction_threshold_explain" version_id="1010000" version_string="1.1.0"><![CDATA[An error will be logged after the configured number of seconds has passed during execution of a transaction]]></phrase>
   </phrases>
   <route_prefixes/>
   <style_properties/>
