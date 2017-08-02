@@ -4,7 +4,7 @@ class SV_SlowQueryLogger_Listener
 {
     public static function init(XenForo_Dependencies_Abstract $dependencies, array $data)
     {
-        if ($dependencies instanceof XenForo_Dependencies_Public)
+        if ($dependencies instanceof XenForo_Dependencies_Public && !class_exists('XFCP_SV_SlowQueryLogger_Profiler', false))
         {
             $db = XenForo_Application::getDb();
             $class = null;
