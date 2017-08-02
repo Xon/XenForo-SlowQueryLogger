@@ -24,7 +24,7 @@ class SV_SlowQueryLogger_Profiler extends XFCP_SV_SlowQueryLogger_Profiler
     {
         if (self::$slowQueryDb === null)
         {
-            self::$slowQueryDb = XenForo_Application::getInstance()->loadDb(XenForo_Application::getConfig());
+            self::$slowQueryDb = XenForo_Application::getInstance()->loadDb(XenForo_Application::getConfig()->db);
             // prevent recursive profiling
             self::$slowQueryDb->setProfiler(false);
         }
