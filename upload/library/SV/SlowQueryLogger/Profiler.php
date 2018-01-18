@@ -118,6 +118,14 @@ class SV_SlowQueryLogger_Profiler extends XFCP_SV_SlowQueryLogger_Profiler
             /** @noinspection PhpVoidFunctionResultUsedInspection */
             $ret = parent::queryEnd($queryId);
 
+            if ($ret == self::STORED)
+            {
+                /** @var Zend_Db_Profiler_Query $qp */
+                $qp = $this->_queryProfiles[$queryId];
+                /** @noinspection PhpUndefinedFieldInspection */
+                $qp->stacktrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS);
+            }
+
             return $ret;
         }
         $old = $this->_enabled;
@@ -133,6 +141,8 @@ class SV_SlowQueryLogger_Profiler extends XFCP_SV_SlowQueryLogger_Profiler
             {
                 /** @var Zend_Db_Profiler_Query $qp */
                 $qp = $this->_queryProfiles[$queryId];
+                /** @noinspection PhpUndefinedFieldInspection */
+                $qp->stacktrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS);
                 if ($qp->getElapsedSecs() >= $this->slowQuery)
                 {
                     static $requestPaths = null;

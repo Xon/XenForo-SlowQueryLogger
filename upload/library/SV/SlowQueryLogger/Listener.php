@@ -24,4 +24,14 @@ class SV_SlowQueryLogger_Listener
             $db->setProfiler(new SV_SlowQueryLogger_Profiler());
         }
     }
+
+    public static function frontControllerPostView(XenForo_FrontController $fc, &$output)
+    {
+        if ($fc->showDebugOutput())
+        {
+            $output = XenForo_Debug::getDebugPageWrapperHtml(
+                SV_SlowQueryLogger_Debug::getDebugHtml()
+            );
+        }
+    }
 }
