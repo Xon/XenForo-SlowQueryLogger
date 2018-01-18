@@ -8,6 +8,8 @@ class SV_SlowQueryLogger_Profiler extends XFCP_SV_SlowQueryLogger_Profiler
     protected $slowTransaction       = 1;
     /** @var bool */
     protected $reportSlowQueries     = false;
+    /** @var bool */
+    protected $trackStacktraces      = false;
     /** @var int|null */
     protected $startTransactionTime  = null;
     /** @var int|null */
@@ -18,6 +20,7 @@ class SV_SlowQueryLogger_Profiler extends XFCP_SV_SlowQueryLogger_Profiler
     public function __construct($reportSlowQueries = true, $enabled = false)
     {
         parent::__construct($enabled);
+        $this->trackStacktraces = XenForo_Application::getOptions()->sv_slowquery_trackstacks;
         $this->slowQuery = XenForo_Application::getOptions()->sv_slowquery_threshold;
         $this->slowTransaction = XenForo_Application::getOptions()->sv_slowtransaction_threshold;
         $this->reportSlowQueries = $reportSlowQueries;
@@ -122,8 +125,11 @@ class SV_SlowQueryLogger_Profiler extends XFCP_SV_SlowQueryLogger_Profiler
             {
                 /** @var Zend_Db_Profiler_Query $qp */
                 $qp = $this->_queryProfiles[$queryId];
-                /** @noinspection PhpUndefinedFieldInspection */
-                $qp->stacktrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS);
+                if ($this->trackStacktraces)
+                {
+                    /** @noinspection PhpUndefinedFieldInspection */
+                    $qp->stacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+                }
             }
 
             return $ret;
@@ -141,8 +147,11 @@ class SV_SlowQueryLogger_Profiler extends XFCP_SV_SlowQueryLogger_Profiler
             {
                 /** @var Zend_Db_Profiler_Query $qp */
                 $qp = $this->_queryProfiles[$queryId];
-                /** @noinspection PhpUndefinedFieldInspection */
-                $qp->stacktrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS);
+                if ($this->trackStacktraces)
+                {
+                    /** @noinspection PhpUndefinedFieldInspection */
+                    $qp->stacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+                }
                 if ($qp->getElapsedSecs() >= $this->slowQuery)
                 {
                     static $requestPaths = null;
