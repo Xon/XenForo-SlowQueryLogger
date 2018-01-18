@@ -2,29 +2,39 @@
 
 class SV_SlowQueryLogger_Profiler extends XFCP_SV_SlowQueryLogger_Profiler
 {
-    protected $slowQuery = 1.5;
-    protected $slowTransaction = 1;
-    protected $reportSlowQueries = false;
-    protected $startTransactionTime = null;
+    /** @var float */
+    protected $slowQuery             = 1.5;
+    /** @var float  */
+    protected $slowTransaction       = 1;
+    /** @var bool */
+    protected $reportSlowQueries     = false;
+    /** @var int|null */
+    protected $startTransactionTime  = null;
+    /** @var int|null */
     protected $transactionEndQueryId = null;
-    protected $startedTransaction = 0;
+    /** @var int */
+    protected $startedTransaction    = 0;
 
     public function __construct($reportSlowQueries = true, $enabled = false)
     {
+        parent::__construct($enabled);
         $this->slowQuery = XenForo_Application::getOptions()->sv_slowquery_threshold;
         $this->slowTransaction = XenForo_Application::getOptions()->sv_slowtransaction_threshold;
         $this->reportSlowQueries = $reportSlowQueries;
-        $this->setEnabled($enabled);
     }
 
+    /** @var Zend_Db_Profiler */
     static $slowQueryDb = null;
+    /** @var Zend_Db_Adapter_Abstract */
     static $appDb = null;
 
     public static function injectSlowQueryDbConn()
     {
         if (self::$slowQueryDb === null)
         {
-            self::$slowQueryDb = XenForo_Application::getInstance()->loadDb(XenForo_Application::getConfig()->db);
+            /** @var XenForo_Application $app */
+            $app = XenForo_Application::getInstance();
+            self::$slowQueryDb = $app->loadDb(XenForo_Application::getConfig()->db);
             // prevent recursive profiling
             self::$slowQueryDb->setProfiler(false);
         }
@@ -87,31 +97,41 @@ class SV_SlowQueryLogger_Profiler extends XFCP_SV_SlowQueryLogger_Profiler
                 $this->transactionEndQueryId = $queryId;
             }
         }
+
         return $queryId;
     }
 
 
+    /**
+     * @param int $queryId
+     * @return string
+     */
     public function queryEnd($queryId)
     {
-    /*
-    WARNING: this function is called after the query is finished initially executing, but not before all results are fetched.
-    Invoking any XF function which touches XenForo_Application::getDb() will likely destroy any unfetched results!!!!
-    must call injectSlowQueryDbConn/removeSlowQueryDbConn around any database access
-    */
+        /*
+        WARNING: this function is called after the query is finished initially executing, but not before all results are fetched.
+        Invoking any XF function which touches XenForo_Application::getDb() will likely destroy any unfetched results!!!!
+        must call injectSlowQueryDbConn/removeSlowQueryDbConn around any database access
+        */
         if (!$this->reportSlowQueries)
         {
-            return parent::queryEnd($queryId);
+            /** @noinspection PhpVoidFunctionResultUsedInspection */
+            $ret = parent::queryEnd($queryId);
+
+            return $ret;
         }
         $old = $this->_enabled;
         $this->_enabled = true;
         $queryEndTime = null;
         try
         {
+            /** @noinspection PhpVoidFunctionResultUsedInspection */
             $ret = parent::queryEnd($queryId);
             $queryEndTime = microtime(true);
 
             if ($ret == self::STORED)
             {
+                /** @var Zend_Db_Profiler_Query $qp */
                 $qp = $this->_queryProfiles[$queryId];
                 if ($qp->getElapsedSecs() >= $this->slowQuery)
                 {
@@ -123,7 +143,7 @@ class SV_SlowQueryLogger_Profiler extends XFCP_SV_SlowQueryLogger_Profiler
                     self::injectSlowQueryDbConn();
                     try
                     {
-                        XenForo_Error::logException(new Exception('Slow query detected: '.round($qp->getElapsedSecs(),4).' seconds, '.(empty($requestPaths['requestUri']) ? '': $requestPaths['requestUri'])), false);
+                        XenForo_Error::logException(new Exception('Slow query detected: ' . round($qp->getElapsedSecs(), 4) . ' seconds, ' . (empty($requestPaths['requestUri']) ? '' : $requestPaths['requestUri'])), false);
                     }
                     finally
                     {
@@ -155,7 +175,7 @@ class SV_SlowQueryLogger_Profiler extends XFCP_SV_SlowQueryLogger_Profiler
             self::injectSlowQueryDbConn();
             try
             {
-                XenForo_Error::logException(new Exception('Slow transaction detected: '.round($queryEndTime,4).' seconds, '.(empty($requestPaths['requestUri']) ? '': $requestPaths['requestUri'])), false);
+                XenForo_Error::logException(new Exception('Slow transaction detected: ' . round($queryEndTime, 4) . ' seconds, ' . (empty($requestPaths['requestUri']) ? '' : $requestPaths['requestUri'])), false);
             }
             finally
             {
@@ -165,4 +185,9 @@ class SV_SlowQueryLogger_Profiler extends XFCP_SV_SlowQueryLogger_Profiler
 
         return $ret;
     }
+}
+
+if (false)
+{
+    class XFCP_SV_SlowQueryLogger_Profiler extends Zend_Db_Profiler {}
 }
