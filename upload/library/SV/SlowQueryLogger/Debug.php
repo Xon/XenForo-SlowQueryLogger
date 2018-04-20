@@ -182,6 +182,10 @@ class SV_SlowQueryLogger_Debug extends XenForo_Debug
                 $v['args'] = [];
             }
 
+            if (!isset($v['file']))
+            {
+                $v['file'] = 'eval';
+            }
             $v['file'] = str_replace($rootDir, '', $v['file']);
 
             $trace .= '#' . ($k - $ignore) . ' ' . $v['file'] . '(' . $v['line'] . '): ' . (isset($v['class']) ? $v['class'] . '->' : '') . $v['function'] . '(' . implode(', ', $v['args']) . ')' . "\n";

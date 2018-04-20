@@ -7,7 +7,7 @@ class SV_SlowQueryLogger_Profiler extends XFCP_SV_SlowQueryLogger_Profiler
     /** @var float  */
     protected $slowTransaction       = 1;
     /** @var bool */
-    protected $reportSlowQueries     = false;
+    public $reportSlowQueries        = false;
     /** @var bool */
     protected $trackStacktraces      = false;
     /** @var int|null */
